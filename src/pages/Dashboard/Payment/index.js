@@ -1,3 +1,7 @@
+import TicketAndPayment from '../../../components/Payment';
+
 export default function Payment() {
-  return 'Pagamento: Em breve!';
+  return (
+    <TicketAndPayment/>
+  );
 }
