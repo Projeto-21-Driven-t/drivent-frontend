@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export default function TicketAndPaymentButton() {
+export default function TicketAndPaymentButton({ title, price, toggle, selected }) {
   const model = {
     id: 1,
     name: 'blabla',
@@ -9,17 +9,15 @@ export default function TicketAndPaymentButton() {
     includesHotel: true
   };
   return (
-    <>
-      <Button>
-        <ButtonTitle>
-          {model.isRemote ? 'Presencial' : 'Online'}
-        </ButtonTitle>
-        <ButtonPrice>R${model.price}</ButtonPrice>
-      </Button>
-    </>
+    <Button selected={selected} onClick={() => toggle(price)}>
+      <ButtonTitle>
+        {title}
+      </ButtonTitle>
+      <ButtonPrice>{price}</ButtonPrice>
+    </Button>
   );
 }
-const Button = styled.div`
+const Button = styled.button`
 height: 145px;
 width: 145px;
 margin-top: 17px;
