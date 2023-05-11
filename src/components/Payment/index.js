@@ -3,6 +3,8 @@ import Typography from '@material-ui/core/Typography';
 import TicketAndPaymentButton from './TicketAndPaymentButton';
 import { useState, useEffect } from 'react';
 
+import useTicketType from '../../hooks/api/useTicketType';
+
 export default function TicketAndPayment() {
   const [ sendData, setSendData ] = useState([]);
   const [ accommodationVisibility, setAccommodationVisibility ] = useState(false);
@@ -13,6 +15,8 @@ export default function TicketAndPayment() {
   const [ presencialSelected, setPresencialSelected ] = useState(false);
   const [ comHotelSelected, setComHotelSelected ] = useState(false);
   const [ semHotelSelected, setSemHotelSelected ] = useState(false);
+
+  const { getTicketsTypes } = useTicketType();
 
   const model = {
     id: 1,
