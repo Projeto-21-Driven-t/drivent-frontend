@@ -13,7 +13,7 @@ export default function TicketAndPaymentButton({ title, price, toggle, selected 
       <ButtonTitle>
         {title}
       </ButtonTitle>
-      <ButtonPrice>{price}</ButtonPrice>
+      <ButtonPrice>R${price}</ButtonPrice>
     </Button>
   );
 }
@@ -21,9 +21,10 @@ const Button = styled.button`
 height: 145px;
 width: 145px;
 margin-top: 17px;
+margin-right: 20px;
 border-radius: 20px;
 border: 1px solid #cecece;
-background-color: ${(props) => (props.selected ? '#FFEED2' : 'none')};
+background-color: ${(props) => (props.selected ? '#FFEED2' : '#ffff')};
 text-align: center;
 font-weight: 400;
 `;

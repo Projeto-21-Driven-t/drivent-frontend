@@ -4,27 +4,23 @@ import TicketAndPaymentButton from './TicketAndPaymentButton';
 import { useState, useEffect } from 'react';
 
 import useTicketType from '../../hooks/api/useTicketType';
+import useSendTicketTypeId from '../../hooks/api/useSendTicketTypeId';
 
-export default function TicketAndPayment() {
-  const [ sendData, setSendData ] = useState([]);
-  const [ accommodationVisibility, setAccommodationVisibility ] = useState(false);
-  const [ bookingButtonVisibility, setBookingButtonVisibility ] = useState(false);
-  const [ accomodationPrice, setAccomodationPrice ] = useState(0);
-  const [ hotelPrice, setHotelPrice ] = useState(0);
-  const [ onlineSelected, setOnlineSelected ] = useState(false);
-  const [ presencialSelected, setPresencialSelected ] = useState(false);
-  const [ comHotelSelected, setComHotelSelected ] = useState(false);
-  const [ semHotelSelected, setSemHotelSelected ] = useState(false);
+export default function TicketAndPayment(enrollment) {
+  const [sendData, setSendData] = useState([]);
+  const [accommodationVisibility, setAccommodationVisibility] = useState(false);
+  const [bookingButtonVisibility, setBookingButtonVisibility] = useState(false);
+  const [accomodationPrice, setAccomodationPrice] = useState(0);
+  const [hotelPrice, setHotelPrice] = useState(0);
+  const [onlineSelected, setOnlineSelected] = useState(false);
+  const [presencialSelected, setPresencialSelected] = useState(false);
+  const [comHotelSelected, setComHotelSelected] = useState(false);
+  const [semHotelSelected, setSemHotelSelected] = useState(false);
 
-  const { getTicketsTypes } = useTicketType();
-
-  const model = {
-    id: 1,
-    name: 'blabla',
-    price: 200,
-    isRemote: true,
-    includesHotel: true
-  };
+  const { ticketType } = useTicketType();
+  
+  //const { sendTicketTypeId } = useSendTicketTypeId();
+  console.log('ticket type INDEX:', ticketType);
 
   function onlineTypeClick() {
     setAccomodationPrice(100);
@@ -63,19 +59,21 @@ export default function TicketAndPayment() {
     setBookingButtonVisibility(!bookingButtonVisibility);
   }
 
+  function reservateTicket() {
+
+  }
   return (
     <>
-      <StyledTypography variant='h4'>Ingresso e pagamento</StyledTypography>
       <StyledSubtitle variant='h6'>Primeiro, escolha sua modalidade de ingresso</StyledSubtitle>
       <div>
-        <TicketAndPaymentButton 
-          title='Presencial' 
+        <TicketAndPaymentButton
+          title='Presencial'
           price={250}
           toggle={presencialTypeClick}
           selected={presencialSelected}
         />
-        <TicketAndPaymentButton 
-          title='Online' 
+        <TicketAndPaymentButton
+          title='Online'
           price={100}
           toggle={onlineTypeClick}
           selected={onlineSelected}
@@ -85,14 +83,14 @@ export default function TicketAndPayment() {
         <>
           <StyledSubtitle variant='h6'>Ótimo! Agora escolha sua modalidade de hospedagem</StyledSubtitle>
           <div>
-            <TicketAndPaymentButton 
-              title='Sem hotel' 
+            <TicketAndPaymentButton
+              title='Sem hotel'
               price={0}
               toggle={semHotelClick}
               selected={semHotelSelected}
             />
-            <TicketAndPaymentButton 
-              title='Com hotel' 
+            <TicketAndPaymentButton
+              title='Com hotel'
               price={350}
               toggle={comHotelClick}
               selected={comHotelSelected}
@@ -100,21 +98,17 @@ export default function TicketAndPayment() {
           </div>
         </>
       ) : null
-      } 
+      }
       {semHotelSelected || comHotelSelected || onlineSelected ? (
         <>
-          <StyledSubtitle variant='h6'>Fechado! O total ficou em R${hotelPrice+accomodationPrice}. Agora é só confirmar:</StyledSubtitle>
+          <StyledSubtitle variant='h6'>Fechado! O total ficou em R${hotelPrice + accomodationPrice}. Agora é só confirmar:</StyledSubtitle>
           <button> RESERVAR INGRESSO </button>
-        </>      
+        </>
       ) : null
-      } 
-    </> 
+      }
+    </>
   );
 }
-
-const StyledTypography = styled(Typography)`
-  margin-bottom: 20px!important;
-`;
 
 const StyledSubtitle = styled(Typography)`
 margin-top: 37px!important;
