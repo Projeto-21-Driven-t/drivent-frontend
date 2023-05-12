@@ -11,12 +11,12 @@ export default function useTicketType() {
     loading: ticketTypeLoading,
     error: ticketTypeError,
     act: getTicketsTypes,
-  } = useAsync(ticketApi.getTicketType(token), false);
+  } = useAsync(() => ticketApi.getTicketType(token));
 
   return {
     ticketType,
     ticketTypeLoading,
     ticketTypeError,
-    getTicketsTypes,
+    getTicketsTypes
   };
 }

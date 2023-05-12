@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export default function TicketAndPaymentButton({ title, price, toggle, selected, width, height, disabled }) {
+export default function TicketAndPaymentButton({ title, price, toggle, selected, plusSign }) {
   const model = {
     id: 1,
     name: 'blabla',
@@ -9,27 +9,27 @@ export default function TicketAndPaymentButton({ title, price, toggle, selected,
     includesHotel: true,
   };
   return (
-    <Button
-      selected={selected}
-      onClick={() => toggle(price)}
-      width={width}
-      height={height}
-      disabled={disabled || false}
-    >
-      <ButtonTitle>{title}</ButtonTitle>
-      <ButtonPrice>{price}</ButtonPrice>
+    <Button selected={selected} onClick={() => toggle(price)}>
+      <ButtonTitle>
+        {title}
+      </ButtonTitle>
+      <ButtonPrice>{plusSign ? '+ ' :''}R$ {price}</ButtonPrice>
     </Button>
   );
 }
 const Button = styled.button`
-  height: ${(props) => (props.height ? props.height : '145px')};
-  width: ${(props) => (props.width ? props.width : '145px')};
-  margin-top: 17px;
-  border-radius: 20px;
-  border: 1px solid #cecece;
-  background-color: ${(props) => (props.selected ? '#FFEED2' : 'none')};
-  text-align: center;
-  font-weight: 400;
+display: flex;
+flex-direction: column;
+align-items: center;
+height: 145px;
+width: 145px;
+margin-top: 17px;
+margin-right: 20px;
+border-radius: 20px;
+border: ${(props) => (props.selected ? 'none' : '1px solid #cecece')};
+background-color: ${(props) => (props.selected ? '#FFEED2' : '#ffff')};
+text-align: center;
+font-weight: 400;
 `;
 
 const ButtonTitle = styled.h1`

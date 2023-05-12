@@ -4,8 +4,9 @@ import TicketAndPaymentButton from './TicketAndPaymentButton';
 import { useState, useEffect } from 'react';
 
 import useTicketType from '../../hooks/api/useTicketType';
+import useSendTicketTypeId from '../../hooks/api/useSendTicketTypeId';
 
-export default function TicketAndPayment() {
+export default function TicketAndPayment(enrollment) {
   const [sendData, setSendData] = useState([]);
   const [accommodationVisibility, setAccommodationVisibility] = useState(false);
   const [bookingButtonVisibility, setBookingButtonVisibility] = useState(false);
@@ -16,15 +17,10 @@ export default function TicketAndPayment() {
   const [comHotelSelected, setComHotelSelected] = useState(false);
   const [semHotelSelected, setSemHotelSelected] = useState(false);
 
-  const { getTicketsTypes } = useTicketType();
-
-  const model = {
-    id: 1,
-    name: 'blabla',
-    price: 200,
-    isRemote: true,
-    includesHotel: true,
-  };
+  const { ticketType } = useTicketType();
+  
+  //const { sendTicketTypeId } = useSendTicketTypeId();
+  console.log('ticket type INDEX:', ticketType);
 
   function onlineTypeClick() {
     setAccomodationPrice(100);
@@ -63,46 +59,86 @@ export default function TicketAndPayment() {
     setBookingButtonVisibility(!bookingButtonVisibility);
   }
 
+  function reservateTicket() {
+
+  }
+
   return (
     <>
-      <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
-      <StyledSubtitle variant="h6">Primeiro, escolha sua modalidade de ingresso</StyledSubtitle>
-      <div>
+      <StyledSubtitle variant='h6'>Primeiro, escolha sua modalidade de ingresso</StyledSubtitle>
+      <Wrapper>
         <TicketAndPaymentButton
-          title="Presencial"
+          title='Presencial'
           price={250}
           toggle={presencialTypeClick}
           selected={presencialSelected}
         />
-        <TicketAndPaymentButton title="Online" price={100} toggle={onlineTypeClick} selected={onlineSelected} />
-      </div>
+        <TicketAndPaymentButton
+          title='Online'
+          price={100}
+          toggle={onlineTypeClick}
+          selected={onlineSelected}
+        />
+      </Wrapper>
       {accommodationVisibility ? (
         <>
-          <StyledSubtitle variant="h6">Ótimo! Agora escolha sua modalidade de hospedagem</StyledSubtitle>
-          <div>
-            <TicketAndPaymentButton title="Sem hotel" price={0} toggle={semHotelClick} selected={semHotelSelected} />
-            <TicketAndPaymentButton title="Com hotel" price={350} toggle={comHotelClick} selected={comHotelSelected} />
-          </div>
+          <StyledSubtitle variant='h6'>Ótimo! Agora escolha sua modalidade de hospedagem</StyledSubtitle>
+          <Wrapper>
+            <TicketAndPaymentButton
+              title='Sem hotel'
+              price={0}
+              plusSign={true}
+              toggle={semHotelClick}
+              selected={semHotelSelected}
+            />
+            <TicketAndPaymentButton
+              title='Com hotel'
+              price={350}
+              plusSign={true}
+              toggle={comHotelClick}
+              selected={comHotelSelected}
+            />
+          </Wrapper>
         </>
-      ) : null}
+      ) : null
+      }
       {semHotelSelected || comHotelSelected || onlineSelected ? (
         <>
-          <StyledSubtitle variant="h6">
-            Fechado! O total ficou em R${hotelPrice + accomodationPrice}. Agora é só confirmar:
-          </StyledSubtitle>
-          <button> RESERVAR INGRESSO </button>
+          <StyledSubtitle variant='h6'>Fechado! O total ficou em <span>R$ {hotelPrice + accomodationPrice}</span>. Agora é só confirmar:</StyledSubtitle>
+          <ButtonReserve> RESERVAR INGRESSO </ButtonReserve>
         </>
-      ) : null}
+      ) : null
+      }
     </>
   );
 }
 
-const StyledTypography = styled(Typography)`
-  margin-bottom: 20px !important;
+const StyledSubtitle = styled(Typography)`
+margin-top: 37px!important;
+size: 20px!important;
+color: #8E8E8E !important;
+span{
+  font-weight: 900;
+}
 `;
 
-export const StyledSubtitle = styled(Typography)`
-  margin-top: 37px !important;
-  size: 20px !important;
-  color: #8e8e8e !important;
+const ButtonReserve = styled.button`
+margin-top: 10px;
+width: 162px;
+height: 37px;
+border: none;
+background: #E0E0E0;
+box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+border-radius: 4px;
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 16px;
+text-align: center;
+color: #000000;
+`;
+
+const Wrapper = styled.div`
+display: flex;
 `;
