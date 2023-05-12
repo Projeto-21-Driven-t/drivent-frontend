@@ -5,7 +5,7 @@ import useHotel from '../../hooks/api/useHotel';
 export default function HotelList() {
   const [hotels, setHotels] = useState(['', '']);
   const hotelsRequest = useHotel();
-  if(hotelsRequest.error) return
+  if(hotelsRequest.error) return;
   
   return (
     <>

@@ -6,7 +6,7 @@ export default function TicketAndPaymentButton({ title, price, toggle, selected,
     name: 'blabla',
     price: 200,
     isRemote: true,
-    includesHotel: true
+    includesHotel: true,
   };
   return (
     <Button selected={selected} onClick={() => toggle(price)}>
@@ -33,15 +33,15 @@ font-weight: 400;
 `;
 
 const ButtonTitle = styled.h1`
-margin-top: 53px;
-font-size: 16px;
-line-height: 19px;
-color: #454545;
+  margin-top: 53px;
+  font-size: 16px;
+  line-height: 19px;
+  color: #454545;
 `;
 
 const ButtonPrice = styled.p`
-font-size: 14px;
-line-height: 16px;
-margin-top: 3px;
-color: #898989;
+  font-size: 14px;
+  line-height: 16px;
+  margin-top: 3px;
+  color: #898989;
 `;
