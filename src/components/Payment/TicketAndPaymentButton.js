@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export default function TicketAndPaymentButton({ title, price, toggle, selected }) {
+export default function TicketAndPaymentButton({ title, price, toggle, selected, plusSign }) {
   const model = {
     id: 1,
     name: 'blabla',
@@ -13,17 +13,20 @@ export default function TicketAndPaymentButton({ title, price, toggle, selected 
       <ButtonTitle>
         {title}
       </ButtonTitle>
-      <ButtonPrice>R${price}</ButtonPrice>
+      <ButtonPrice>{plusSign ? '+ ' :''}R$ {price}</ButtonPrice>
     </Button>
   );
 }
 const Button = styled.button`
+display: flex;
+flex-direction: column;
+align-items: center;
 height: 145px;
 width: 145px;
 margin-top: 17px;
 margin-right: 20px;
 border-radius: 20px;
-border: 1px solid #cecece;
+border: ${(props) => (props.selected ? 'none' : '1px solid #cecece')};
 background-color: ${(props) => (props.selected ? '#FFEED2' : '#ffff')};
 text-align: center;
 font-weight: 400;

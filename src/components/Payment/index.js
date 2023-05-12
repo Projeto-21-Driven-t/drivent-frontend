@@ -62,10 +62,11 @@ export default function TicketAndPayment(enrollment) {
   function reservateTicket() {
 
   }
+
   return (
     <>
       <StyledSubtitle variant='h6'>Primeiro, escolha sua modalidade de ingresso</StyledSubtitle>
-      <div>
+      <Wrapper>
         <TicketAndPaymentButton
           title='Presencial'
           price={250}
@@ -78,31 +79,33 @@ export default function TicketAndPayment(enrollment) {
           toggle={onlineTypeClick}
           selected={onlineSelected}
         />
-      </div>
+      </Wrapper>
       {accommodationVisibility ? (
         <>
           <StyledSubtitle variant='h6'>Ótimo! Agora escolha sua modalidade de hospedagem</StyledSubtitle>
-          <div>
+          <Wrapper>
             <TicketAndPaymentButton
               title='Sem hotel'
               price={0}
+              plusSign={true}
               toggle={semHotelClick}
               selected={semHotelSelected}
             />
             <TicketAndPaymentButton
               title='Com hotel'
               price={350}
+              plusSign={true}
               toggle={comHotelClick}
               selected={comHotelSelected}
             />
-          </div>
+          </Wrapper>
         </>
       ) : null
       }
       {semHotelSelected || comHotelSelected || onlineSelected ? (
         <>
-          <StyledSubtitle variant='h6'>Fechado! O total ficou em R${hotelPrice + accomodationPrice}. Agora é só confirmar:</StyledSubtitle>
-          <button> RESERVAR INGRESSO </button>
+          <StyledSubtitle variant='h6'>Fechado! O total ficou em <span>R$ {hotelPrice + accomodationPrice}</span>. Agora é só confirmar:</StyledSubtitle>
+          <ButtonReserve> RESERVAR INGRESSO </ButtonReserve>
         </>
       ) : null
       }
@@ -114,4 +117,28 @@ const StyledSubtitle = styled(Typography)`
 margin-top: 37px!important;
 size: 20px!important;
 color: #8E8E8E !important;
+span{
+  font-weight: 900;
+}
+`;
+
+const ButtonReserve = styled.button`
+margin-top: 10px;
+width: 162px;
+height: 37px;
+border: none;
+background: #E0E0E0;
+box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.25);
+border-radius: 4px;
+font-family: 'Roboto';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 16px;
+text-align: center;
+color: #000000;
+`;
+
+const Wrapper = styled.div`
+display: flex;
 `;
