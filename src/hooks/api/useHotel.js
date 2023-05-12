@@ -6,7 +6,11 @@ import * as hotelApi from '../../services/hotelApi';
 export default function useHotel() {
   const token = useToken();
 
-  const HotelList = useAsync(hotelApi.getHotels(token), false);
+  const {
+    loading: hotelLoading,
+    error: hotelError,
+    act: hotel
+  } = useAsync((data) => hotelApi.getHotels(token), false);
 
-  return HotelList;
+  return { hotelLoading, hotelError, hotel };
 }
