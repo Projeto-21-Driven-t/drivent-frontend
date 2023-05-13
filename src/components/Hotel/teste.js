@@ -1,59 +1,52 @@
 import styled from 'styled-components';
-import Typography from '@material-ui/core/Typography';
-
-import Checkin from '../Payment/checkin';
-import useEnrollment from '../../hooks/api/useEnrollment';
-import Checkout from '../Payment/checkout';
-import useTicket from '../../hooks/api/useTicket';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import useHotels from '../../hooks/api/useHotel';
+import useEnrollment from '../../hooks/api/useEnrollment';
+import useTicket from '../../hooks/api/useTicket';
 
-export default function TicketAndPayment() {
+export default function HotelList() {
   const { enrollment } = useEnrollment();
-  const { ticketLoading, getTickets } = useTicket();
-  const { getHotels } = useHotels(); 
   const [ticket, setTicket] = useState();
+  const { ticketLoading, getTickets } = useTicket();
+  const { hotelsLoading, getHotels } = useHotels();
   const [hotels, setHotels] = useState([]);
 
-  async function fetchTicketAndHotels() {
+  async function findHotels() {
     try {
       const ticket = await getTickets();
       setTicket(ticket);
       const hotels = await getHotels();
       setHotels(hotels);
     } catch (error) {
-      return;
+      if(error.message == 'Request failed with status code 404') {
+        console.log('percebi o erro.');
+      }
     }
-  }
+  };
 
   useEffect(() => {
-    fetchTicketAndHotels();
+    findHotels();
   }, []);
-
+  
   return (
     <Screen>
       <h1>Escolha de hotel e quarto</h1>
-      {enrollment}
+      <h2>Primeiro, escolha seu hotel</h2>
+      <Hotels>
+        {hotels.map((h) =>
+          <HotelStyled>
+            <img src='https://cdnstatic8.com/viajandonajanela.com/wp-content/uploads/2020/09/Hotel-Valle-Dincanto-2-melhores-hoteis-booking-1.jpg?w=853&ssl=1' alt='Hotel img'/>
+            <h3>Hotel</h3>
+            <h4>Tipos de acomodação:</h4>
+            <p>Single e Double</p>
+            <h4>Vagas disponíveis:</h4>
+            <p>25</p>
+          </HotelStyled>
+        )}
+      </Hotels>
     </Screen>
   );
 }
-
-const StyledTypography = styled(Typography)`
-  margin-bottom: 20px !important;
-`;
-
-const SubscriptionBoxMessage = styled.div`
-  width: 420px;
-  height: 46px;
-  margin: 243px auto;
-  text-align: center;
-  h4 {
-    font-weight: 400;
-    font-size: 20px;
-    line-height: 23px;
-    color: #8e8e8e;
-  }
-`;
 
 const Screen = styled.div`
   h1{
