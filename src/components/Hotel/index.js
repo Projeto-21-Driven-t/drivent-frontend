@@ -12,7 +12,7 @@ export function HotelList() {
     const [dataRooms, setDataRooms] = React.useState(null);
     const [displayRooms, setDisplayRooms] = React.useState(false)
     const [selectedRoom, setSelectedRoom] = React.useState('')
-    const [selectedHotel, setSelectedHotel] = React.useState(2)
+    const [selectedHotel, setSelectedHotel] = React.useState(0)
     const [hotels, setHotels] = useState(['', '']);
     const { data, loading, error, act } = useHotel();
 
@@ -36,11 +36,12 @@ export function HotelList() {
         };
 
         fetchData();
-    }, [token]);
+    }, [token, selectedHotel]);
 
     function hotelClick(hotelId){
-        setDisplayRooms(true);
         setSelectedHotel(hotelId);
+        setDisplayRooms(true);
+        
     }
 
     if (error) {
