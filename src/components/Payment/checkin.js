@@ -64,6 +64,7 @@ export default function Checkin(enrollment) {
     try{
       sendTicketTypeId(data);
       toast('Informações salvas com sucesso!');
+      window.location.reload(false);
       return true;
     } catch(err) {
       console.log(err);
@@ -74,11 +75,11 @@ export default function Checkin(enrollment) {
 
   async function checkTicketType() {
     if(onlineSelected) {
-      bookTicket({ ticketTypeId: 1 });
+      bookTicket({ ticketTypeId: ticketType[0].id });
     }else if(comHotelSelected) {
-      bookTicket({ ticketTypeId: 2 });
+      bookTicket({ ticketTypeId: ticketType[1].id  });
     }else if(semHotelSelected) {
-      bookTicket({ ticketTypeId: 3 });
+      bookTicket({ ticketTypeId: ticketType[2].id  });
     }
   }
 
