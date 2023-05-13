@@ -3,13 +3,11 @@ import { useState, useEffect } from 'react';
 import useHotel from '../../hooks/api/useHotel';
 
 export default function HotelList() {
+  console.log('Executou o HotelList');
   const [hotels, setHotels] = useState(['', '']);
-  const { data, loading, error, act } = useHotel();
-  if(error) {
-    return(
-      <h1>Erro 404</h1>
-    );
-  }
+  const data = useHotel();
+  console.log(data);
+ 
   return (
     <Screen>
       <h1>Escolha de hotel e quarto</h1>
@@ -21,8 +19,8 @@ export default function HotelList() {
             <h3>Hotel</h3>
             <h4>Tipos de acomodação:</h4>
             <p>Single e Double</p>
-            <h4>Tipos de acomodação:</h4>
-            <p>Single e Double</p>
+            <h4>Vagas disponíveis:</h4>
+            <p>25</p>
           </HotelStyled>
         )}
       </Hotels>
@@ -62,6 +60,7 @@ const HotelStyled = styled.div`
   display: flex;
   flex-direction: column;
   align-items:flex-start;
+  transition:all linear .2s;
 
   font-family: "Roboto", sans-serif;
 
@@ -95,5 +94,12 @@ const HotelStyled = styled.div`
 
   &:hover{
     background-color: #C1C1C1;
+
+    img{
+      width: 174px;
+      height: 115px;
+      margin-left: -2px;
+    }
   }
+  
 `;
