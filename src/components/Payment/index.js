@@ -4,16 +4,27 @@ import Typography from '@material-ui/core/Typography';
 import Checkin from './checkin';
 import useEnrollment from '../../hooks/api/useEnrollment';
 import Checkout from './checkout';
+import useTicket from '../../hooks/api/useTicket';
+import { useEffect, useState } from 'react';
 
 export default function TicketAndPayment() {
   const { enrollment } = useEnrollment();
+  const { ticketLoading, getTickets } = useTicket();
+  const [ticket, setTicket] = useState();
 
-  const ticket = {
-    TicketType: {
-      name: 'blabla',
-      price: 400,
-    },
-  };
+  async function fetchTicket() {
+    try {
+      const ticket = await getTickets();
+      setTicket(ticket);
+    } catch (error) {
+      return;
+    }
+  }
+
+  useEffect(() => {
+    fetchTicket();
+  }, []);
+
   return (
     <>
       <StyledTypography variant="h4">Ingresso e pagamento</StyledTypography>
