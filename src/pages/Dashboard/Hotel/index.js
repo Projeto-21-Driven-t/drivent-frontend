@@ -7,7 +7,6 @@ export default function Hotel() {
   return(
     <>
       <HotelList/>
-      <Rooms/>
     </>
   )
 }

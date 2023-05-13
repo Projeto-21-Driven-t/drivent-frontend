@@ -9,38 +9,12 @@ import { useState, useEffect } from 'react';
 import useHotel from '../../hooks/api/useHotel';
 
 export function HotelList() {
-    const [hotels, setHotels] = useState(['', '']);
-    const { data, loading, error, act } = useHotel();
-    if (error) {
-        return (
-            <h1>Erro 404</h1>
-        );
-    }
-    return (
-        <Screen>
-            <h1>Escolha de hotel e quarto</h1>
-            <h2>Primeiro, escolha seu hotel</h2>
-            <Hotels>
-                {hotels.map((h) =>
-                    <HotelStyled>
-                        <img src='https://cdnstatic8.com/viajandonajanela.com/wp-content/uploads/2020/09/Hotel-Valle-Dincanto-2-melhores-hoteis-booking-1.jpg?w=853&ssl=1' alt='Hotel img' />
-                        <h3>Hotel</h3>
-                        <h4>Tipos de acomodação:</h4>
-                        <p>Single e Double</p>
-                        <h4>Tipos de acomodação:</h4>
-                        <p>Single e Double</p>
-                    </HotelStyled>
-                )}
-            </Hotels>
-        </Screen>
-    );
-}
-
-export function Rooms() {
-    const [data, setData] = React.useState(null);
-    const [displayRooms, setDisplayRooms] = React.useState(true)
+    const [dataRooms, setDataRooms] = React.useState(null);
+    const [displayRooms, setDisplayRooms] = React.useState(false)
     const [selectedRoom, setSelectedRoom] = React.useState('')
     const [selectedHotel, setSelectedHotel] = React.useState(2)
+    const [hotels, setHotels] = useState(['', '']);
+    const { data, loading, error, act } = useHotel();
 
     const token = useToken();
 
@@ -54,7 +28,7 @@ export function Rooms() {
         const fetchData = async () => {
             try {
                 const result = await getHotelRequest(token);
-                setData(result.Rooms);
+                setDataRooms(result.Rooms);
             } catch (error) {
                 console.log('error')
                 console.error(error)
@@ -64,12 +38,38 @@ export function Rooms() {
         fetchData();
     }, [token]);
 
+    function hotelClick(hotelId){
+        setDisplayRooms(true);
+        setSelectedHotel(hotelId);
+    }
+
+    if (error) {
+        return (
+            <h1>Erro 404</h1>
+        );
+    }
     return (
         <>
-            <RoomSection displayProperty={displayRooms ? 'block' : 'none'}>
+        <Screen>
+            <h1>Escolha de hotel e quarto</h1>
+            <h2>Primeiro, escolha seu hotel</h2>
+            <Hotels>
+                {hotels.map((h) =>
+                    <HotelStyled onClick={() => hotelClick(2)}>
+                        <img src='https://cdnstatic8.com/viajandonajanela.com/wp-content/uploads/2020/09/Hotel-Valle-Dincanto-2-melhores-hoteis-booking-1.jpg?w=853&ssl=1' alt='Hotel img' />
+                        <h3>Hotel</h3>
+                        <h4>Tipos de acomodação:</h4>
+                        <p>Single e Double</p>
+                        <h4>Tipos de acomodação:</h4>
+                        <p>Single e Double</p>
+                    </HotelStyled>
+                )}
+            </Hotels>
+        </Screen>
+        <RoomSection displayProperty={displayRooms ? 'block' : 'none'}>
                 <StyledSubtitle variant='h6'>Ótima pedida! Agora escolha seu quarto:</StyledSubtitle>
                 <RoomDiv>
-                    {!data ? '' : data.map(item => {
+                    {!dataRooms ? '' : dataRooms.map(item => {
                         return (
                             item.capacity === item.bookingCount ?
                                 <RoomBoxFull key={item.id}>
@@ -118,11 +118,11 @@ export function Rooms() {
                     <p>RESERVAR QUARTO</p>
                 </ReservateRoomButton>
             </RoomSection>
-
-
         </>
     );
 }
+
+
 
 const Screen = styled.div`
   h1{
