@@ -10,13 +10,6 @@ export default function TicketAndPaymentButton({
   width,
   height,
 }) {
-  const model = {
-    id: 1,
-    name: 'blabla',
-    price: 200,
-    isRemote: true,
-    includesHotel: true,
-  };
   return (
     <Button selected={selected} onClick={() => toggle(price)} disabled={disabled} width={width} height={height}>
       <ButtonTitle>{title}</ButtonTitle>
@@ -26,7 +19,9 @@ export default function TicketAndPaymentButton({
     </Button>
   );
 }
+
 const Button = styled.button`
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
