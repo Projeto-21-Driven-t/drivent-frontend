@@ -7,6 +7,7 @@ import * as hotelApi from '../../services/hotelApi';
 import useToken from '../../hooks/useToken';
 import { useState, useEffect } from 'react';
 import useHotels from '../../hooks/api/useHotel';
+import Hotel from './hotel';
 
 export function HotelList() {
   const [dataRooms, setDataRooms] = React.useState(null);
@@ -51,30 +52,27 @@ export function HotelList() {
       fetchData();
   }, [token]);
 
-    function hotelClick(hotelId){
-        setSelectedHotel(hotelId);
-        setDisplayRooms(true);
-        
-    }
-
     return (
         <>
-        {hotelError == '' ? <Screen>
-            <h1>Escolha de hotel e quarto</h1>
+        <Screen>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        {hotelError == '' ? 
+            <>
             <h2>Primeiro, escolha seu hotel</h2>
             <Hotels>
                 {hotels.map((h) =>
-                    <HotelStyled onClick={() => hotelClick(h.id)}>
-                        <img src='https://cdnstatic8.com/viajandonajanela.com/wp-content/uploads/2020/09/Hotel-Valle-Dincanto-2-melhores-hoteis-booking-1.jpg?w=853&ssl=1' alt='Hotel img' />
-                        <h3>{h.name}</h3>
-                        <h4>Tipos de acomodação:</h4>
-                        <p>Single e Double</p>
-                        <h4>Tipos de acomodação:</h4>
-                        <p>Single e Double</p>
-                    </HotelStyled>
+                    <Hotel 
+                    id={h.id}
+                    name={h.name}
+                    image={h.image}
+                    token={token}
+                    setSelectedHotel={setSelectedHotel}
+                    setDisplayRooms={setDisplayRooms}
+                    />
                 )}
             </Hotels>
-        </Screen> : 
+            </>
+        : 
         hotelError == 'cannotFindEnrollmenteError' ?
          <SubscriptionBoxMessage>
          <h4>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</h4>
@@ -86,7 +84,7 @@ export function HotelList() {
        <SubscriptionBoxMessage>
        <h4>Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades</h4>
      </SubscriptionBoxMessage> 
-        }
+        }</Screen> 
         <RoomSection displayProperty={displayRooms ? 'block' : 'none'}>
                 <StyledSubtitle variant='h6'>Ótima pedida! Agora escolha seu quarto:</StyledSubtitle>
                 <RoomDiv>
@@ -146,10 +144,11 @@ export function HotelList() {
 
 
 const Screen = styled.div`
+  font-family: 'Roboto' sans-serif;
+
   h1{
     font-size: 34px;
     line-height: 40px;
-    margin: 34px 0px 36px 0px;
   }
 
   h2{
@@ -321,4 +320,8 @@ const SubscriptionBoxMessage = styled.div`
     line-height: 23px;
     color: #8e8e8e;
   }
+`;
+
+const StyledTypography = styled(Typography)`
+  margin-bottom: 20px !important;
 `;

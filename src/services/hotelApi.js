@@ -7,7 +7,6 @@ export async function getHotels(token) {
     },
   });
 
-  console.log('Executou o hotelAPI');
   return response.data;
 }
 
