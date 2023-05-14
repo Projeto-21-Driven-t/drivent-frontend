@@ -29,6 +29,7 @@ export default function useAsync(handler, immediate = true) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  console.log('Executou o useAsync');
   return {
     data,
     loading,
