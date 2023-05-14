@@ -16,6 +16,8 @@ export function HotelList() {
   const [selectedHotel, setSelectedHotel] = React.useState(0)
   const [hotels, setHotels] = useState([]);
   const [hotelError, setHotelError] = useState('');
+  const [accommodationType,setAccommodationType] = useState('none');
+  const [vacancies,setVacancies] = useState(0)
   const { getHotels } = useHotels();
 
   const token = useToken();
@@ -29,8 +31,16 @@ export function HotelList() {
     React.useEffect(() => {
         const fetchData = async () => {
             try {
-              const result = await getHotelRequest(token);
-              setDataRooms(result.Rooms);
+              let vacancies = 0;
+              const { Rooms } = await getHotelRequest(token);
+              Rooms.map((r) => vacancies+= r.capacity - r.bookingCount);
+              setVacancies(vacancies);
+              const single = Rooms.filter((r) => r.capacity == 1);
+              const double = Rooms.filter((r) => r.capacity > 1);
+              if(single.length > 0  || double.length > 0) setAccommodationType('Single e Double');
+              if(single.length > 0 && double.length == 0) setAccommodationType('Single');
+              if(single.length == 0 && double.length > 0) setAccommodationType('Double');
+              setDataRooms(Rooms);
             } catch (error) {
                 console.log(error);
             }
@@ -66,6 +76,9 @@ export function HotelList() {
                     name={h.name}
                     image={h.image}
                     token={token}
+                    accommodationType={accommodationType}
+                    vacancies={vacancies}
+                    selectedHotel={selectedHotel}
                     setSelectedHotel={setSelectedHotel}
                     setDisplayRooms={setDisplayRooms}
                     />

@@ -83,6 +83,7 @@ export default function PersonalInformationForm() {
 
   useEffect(() => {
     if (enrollment) {
+      console.log(enrollment);
       setData({
         name: enrollment.name,
         cpf: enrollment.cpf,

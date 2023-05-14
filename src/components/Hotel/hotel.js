@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { useState } from 'react';
 
 export default function Hotel(props) {
-  const { id, name, image, setSelectedHotel, setDisplayRooms } = props;
+  const { id, name, image, vacancies, accommodationType, selectedHotel, setSelectedHotel, setDisplayRooms } = props;
 
   function hotelClick(hotelId) {
     setSelectedHotel(hotelId);
@@ -10,13 +10,23 @@ export default function Hotel(props) {
   }
 
   return (
-    <HotelStyled onClick={() => hotelClick(id)}>
+    <HotelStyled 
+      onClick={() => hotelClick(id)}
+      selectedHotel={selectedHotel}
+      id={id}
+    >
       <img src={image} alt='Hotel img' />
       <h3>{name}</h3>
-      <h4>Tipos de acomodação:</h4>
-      <p>Single e Double</p>
-      <h4>Vagas disponíveis:</h4>
-      <p>25</p>
+      {
+        selectedHotel == id &&
+          vacancies > 0 &&
+            <>
+              <h4>Tipos de acomodação:</h4>
+              <p>{accommodationType}</p>
+              <h4>Vagas disponíveis:</h4>
+              <p>{vacancies}</p>
+            </> 
+      }
     </HotelStyled>
   );
 }
@@ -25,7 +35,7 @@ const HotelStyled = styled.div`
   width: 196px;
   height: 264px;
   padding: 16px 14px;
-  background-color: #EBEBEB;
+  background-color: ${(props) => props.selectedHotel == props.id ? '#FFEED2' : '#EBEBEB'};
   margin-right:19px;
   border-radius: 10px;
 
