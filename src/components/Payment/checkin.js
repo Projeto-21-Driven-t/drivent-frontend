@@ -117,7 +117,7 @@ export const StyledSubtitle = styled(Typography)`
 
 export const ButtonReserve = styled.button`
   margin-top: 10px;
-  width: 162px;
+  width: fit-content;
   height: 37px;
   border: none;
   background: #e0e0e0;
