@@ -2,12 +2,12 @@ import styled from 'styled-components';
 import Typography from '@material-ui/core/Typography';
 import TicketAndPaymentButton from './TicketAndPaymentButton';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 import useTicketType from '../../hooks/api/useTicketType';
 import useSendTicketTypeId from '../../hooks/api/useSendTicketTypeId';
 
 export default function Checkin(enrollment) {
-  const [sendData, setSendData] = useState([]);
   const [accommodationVisibility, setAccommodationVisibility] = useState(false);
   const [bookingButtonVisibility, setBookingButtonVisibility] = useState(false);
   const [accomodationPrice, setAccomodationPrice] = useState(0);
@@ -16,10 +16,10 @@ export default function Checkin(enrollment) {
   const [presencialSelected, setPresencialSelected] = useState(false);
   const [comHotelSelected, setComHotelSelected] = useState(false);
   const [semHotelSelected, setSemHotelSelected] = useState(false);
+  const { sendTicketTypeId } = useSendTicketTypeId();
 
   const { ticketType } = useTicketType();
 
-  //const { sendTicketTypeId } = useSendTicketTypeId();
   console.log('ticket type INDEX:', ticketType);
 
   function onlineTypeClick() {
@@ -59,7 +59,29 @@ export default function Checkin(enrollment) {
     setBookingButtonVisibility(!bookingButtonVisibility);
   }
 
-  function reservateTicket() {}
+  const bookTicket = async(data) => {
+    console.log('reservando o ticket');
+    try{
+      sendTicketTypeId(data);
+      toast('Informações salvas com sucesso!');
+      window.location.reload(false);
+      return true;
+    } catch(err) {
+      console.log(err);
+      toast('Não foi possível salvar suas informações!');
+      return false;
+    }
+  };
+
+  async function checkTicketType() {
+    if(onlineSelected) {
+      bookTicket({ ticketTypeId: ticketType[0].id });
+    }else if(comHotelSelected) {
+      bookTicket({ ticketTypeId: ticketType[1].id  });
+    }else if(semHotelSelected) {
+      bookTicket({ ticketTypeId: ticketType[2].id  });
+    }
+  }
 
   return (
     <>
@@ -99,7 +121,7 @@ export default function Checkin(enrollment) {
           <StyledSubtitle variant="h6">
             Fechado! O total ficou em <span>R$ {hotelPrice + accomodationPrice}</span>. Agora é só confirmar:
           </StyledSubtitle>
-          <ButtonReserve> RESERVAR INGRESSO </ButtonReserve>
+          <ButtonReserve onClick={() => checkTicketType()}> RESERVAR INGRESSO </ButtonReserve>
         </>
       ) : null}
     </>
@@ -116,6 +138,7 @@ export const StyledSubtitle = styled(Typography)`
 `;
 
 export const ButtonReserve = styled.button`
+  cursor: pointer;
   margin-top: 10px;
   width: 162px;
   height: 37px;

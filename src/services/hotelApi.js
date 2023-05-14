@@ -10,3 +10,12 @@ export async function getHotels(token) {
   console.log('Executou o hotelAPI');
   return response.data;
 }
+
+export async function performGetHotel(token, hotelId) {
+  const response = await api.get(`hotels/${hotelId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+}
