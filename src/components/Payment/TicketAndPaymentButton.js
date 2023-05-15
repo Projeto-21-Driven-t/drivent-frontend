@@ -35,6 +35,9 @@ const Button = styled.button`
   background-color: ${(props) => (props.selected ? '#FFEED2' : '#ffff')};
   text-align: center;
   font-weight: 400;
+  :disabled{
+    cursor: default;
+  }
 `;
 
 const ButtonTitle = styled.h1`
