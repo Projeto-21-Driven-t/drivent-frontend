@@ -35,6 +35,7 @@ const HotelStyled = styled.div`
   width: 196px;
   height: 264px;
   padding: 16px 14px;
+  margin-bottom: 15px;
   background-color: ${(props) => props.selectedHotel == props.id ? '#FFEED2' : '#EBEBEB'};
   margin-right:19px;
   border-radius: 10px;
