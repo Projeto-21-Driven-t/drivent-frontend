@@ -32,14 +32,21 @@ export function HotelList() {
         const fetchData = async () => {
             try {
               let vacancies = 0;
+              let RoomsCapacity = [];
+              let accommodationTypeArray = []
               const { Rooms } = await getHotelRequest(token);
-              Rooms.map((r) => vacancies+= r.capacity - r.bookingCount);
+              Rooms.map((r) => {
+                vacancies+= r.capacity - r.bookingCount;
+                RoomsCapacity.push(r.capacity);
+              });
+
+              {RoomsCapacity.includes(1) && accommodationTypeArray.push('Single')};
+              {RoomsCapacity.includes(2) && accommodationTypeArray.push('Double')};
+              {RoomsCapacity.includes(3) && accommodationTypeArray.push('Triple')};
+              {RoomsCapacity.includes(4) && accommodationTypeArray.push('Quadruple')};
+
+              setAccommodationType(accommodationTypeArray.join(', '))
               setVacancies(vacancies);
-              const single = Rooms.filter((r) => r.capacity == 1);
-              const double = Rooms.filter((r) => r.capacity > 1);
-              if(single.length > 0  || double.length > 0) setAccommodationType('Single e Double');
-              if(single.length > 0 && double.length == 0) setAccommodationType('Single');
-              if(single.length == 0 && double.length > 0) setAccommodationType('Double');
               setDataRooms(Rooms);
             } catch (error) {
                 console.log(error);
