@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { useState } from 'react';
 
 export default function Hotel(props) {
   const { id, name, image, vacancies, accommodationType, selectedHotel, setSelectedHotel, setDisplayRooms } = props;
