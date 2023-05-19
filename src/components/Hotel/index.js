@@ -8,6 +8,7 @@ import useToken from '../../hooks/useToken';
 import { useState, useEffect } from 'react';
 import useHotels from '../../hooks/api/useHotel';
 import Hotel from './hotel';
+import {useCreateRooms, useFindRooms} from '../../hooks/api/useRoom';
 
 export function HotelList() {
   const [dataRooms, setDataRooms] = React.useState(null);
@@ -17,8 +18,10 @@ export function HotelList() {
   const [hotels, setHotels] = useState([]);
   const [hotelError, setHotelError] = useState('');
   const [accommodationType,setAccommodationType] = useState('none');
-  const [vacancies,setVacancies] = useState(0)
+  const [vacancies,setVacancies] = useState(0);
+  const [userReservation,setUserReservation] = useState()
   const { getHotels } = useHotels();
+  
 
   const token = useToken();
 
@@ -69,6 +72,25 @@ export function HotelList() {
       fetchData();
   }, [token]);
 
+  React.useEffect(() => {
+    const fetchData = async () => {
+        try {
+          const hotels = await getHotels();
+          setHotels(hotels);
+        } catch (error) {
+            setHotelError(error.response.data.message);
+        }
+    };
+
+    fetchData();
+}, [token]);
+
+  async function reservate(){
+    await createRoom(selectedHotel);
+  }
+
+  
+  if(!userReservation){
     return (
         <>
         <Screen>
@@ -153,14 +175,14 @@ export function HotelList() {
                         )
                     })}
                 </RoomDiv>
-                <ReservateRoomButton>
+                <ReservateRoomButton onClick={'nada'}>
                     <p>RESERVAR QUARTO</p>
                 </ReservateRoomButton>
             </RoomSection>
         </>
     );
 }
-
+}
 
 
 const Screen = styled.div`
@@ -238,7 +260,6 @@ const HotelStyled = styled.div`
     }
   }
 `;
-
 
 const StyledSubtitle = styled.h2`
     margin-top: 37px;
