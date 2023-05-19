@@ -27,15 +27,15 @@ function useFindRooms() {
     data: Room,
     loading: RoomLoading,
     error: RoomError,
-    act: createRoom,
+    act: findRoom,
   } = useAsync(() => roomApi.findRoom(token), false);
     
   return {
     Room,
     RoomLoading,
     RoomError,
-    createRoom
+    findRoom
   };
 }
 
-export default { useCreateRooms, useFindRooms };
+export { useCreateRooms, useFindRooms };
