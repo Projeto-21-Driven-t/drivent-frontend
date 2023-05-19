@@ -11,7 +11,7 @@ export async function reservateRoom(token) {
 }
 
 export async function findRoom(token) {
-  const response = await api.post('/booking', {
+  const response = await api.post('/booking/check', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
