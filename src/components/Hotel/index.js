@@ -71,11 +71,24 @@ export function HotelList() {
   React.useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRoom = await findRoom();
-        setUserRoom(userRoom);
         const hotels = await getHotels();
         setHotels(hotels);
       } catch (error) {
+        console.log(error.message);
+        setHotelError(error.response.data.message);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userRoom = await findRoom();
+        setUserRoom(userRoom);
+      } catch (error) {
+        console.log(error.message);
         setHotelError(error.response.data.message);
       }
     };
@@ -92,7 +105,7 @@ export function HotelList() {
       <>
         <Screen>
           <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-          {hotelError == '' ? (
+          {hotelError == '' || 'Request failed with status code 404' ? (
             userRoom ? (
               <>
                 <HotelCheckoutResume />
