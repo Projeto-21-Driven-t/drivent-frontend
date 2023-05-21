@@ -22,6 +22,7 @@ export function HotelList() {
   const [accommodationType, setAccommodationType] = useState('none');
   const [vacancies, setVacancies] = useState(0);
   const [userRoom, setUserRoom] = useState();
+  const [roomChange, setRoomChange] = useState(false);
   const { getHotels } = useHotels();
   const { findRoom } = useFindRooms();
 
@@ -45,10 +46,13 @@ export function HotelList() {
         });
 
         {
-          RoomsCapacity.includes(1) ? accommodationTypeArray.push('Single') :
-            RoomsCapacity.includes(2) ? accommodationTypeArray.push('Double') :
-              RoomsCapacity.includes(3) ? accommodationTypeArray.push('Triple') :
-              accommodationTypeArray.push('Quadruple')
+          RoomsCapacity.includes(1)
+            ? accommodationTypeArray.push('Single')
+            : RoomsCapacity.includes(2)
+            ? accommodationTypeArray.push('Double')
+            : RoomsCapacity.includes(3)
+            ? accommodationTypeArray.push('Triple')
+            : accommodationTypeArray.push('Quadruple');
         }
 
         setAccommodationType(accommodationTypeArray.join(', '));
@@ -74,7 +78,7 @@ export function HotelList() {
     };
 
     fetchData();
-  }, [token,]);
+  }, [token]);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -91,117 +95,110 @@ export function HotelList() {
   }, [token]);
 
   async function reservate() {
-
-    if(!userRoom) {
-      await roomApi.reservateRoom(token, selectedHotel);
-    }
-    else{
-      await roomApi.changeBooking(token, selectedHotel);
-    }
-    const userRoom = await findRoom();
-    setUserRoom(userRoom);
+    if (!selectedRoom) return alert('Você precisa selecionar um quarto!');
+    const booking = await roomApi.reservateRoom(token, selectedRoom);
+    setUserRoom(booking?.Room);
+    setRoomChange(false);
   }
 
- 
-    return (
-      <>
-        <Screen>
-          <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-          {hotelError == '' || 'Request failed with status code 404' ? (
-            userRoom ? (
-              <>
-                <HotelCheckoutResume
-                roomInfo={userRoom}
-                setUserRoom={setUserRoom}/>
-              </>
-            ) : (
-              <>
-                <h2>Primeiro, escolha seu hotel</h2>
-                <Hotels>
-                  {hotels.map((h) => (
-                    <Hotel
-                      id={h.id}
-                      name={h.name}
-                      image={h.image}
-                      token={token}
-                      accommodationType={accommodationType}
-                      vacancies={vacancies}
-                      selectedHotel={selectedHotel}
-                      setSelectedHotel={setSelectedHotel}
-                      setDisplayRooms={setDisplayRooms}
-                    />
-                  ))}
-                </Hotels>
-              </>
-            )
-          ) : hotelError == 'cannotFindEnrollmenteError' ? (
-            <SubscriptionBoxMessage>
-              <h4>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</h4>
-            </SubscriptionBoxMessage>
-          ) : hotelError == 'notPaidYetError' ? (
-            <SubscriptionBoxMessage>
-              <h4>Você precisa ter confirmado pagamento antes fazer a escolha de hospedagem</h4>
-            </SubscriptionBoxMessage>
+  return (
+    <>
+      <Screen>
+        <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
+        {hotelError == '' || 'Request failed with status code 404' ? (
+          userRoom && !roomChange ? (
+            <>
+              <HotelCheckoutResume roomInfo={userRoom} setUserRoom={setUserRoom} />
+            </>
           ) : (
-            <SubscriptionBoxMessage>
-              <h4>Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades</h4>
-            </SubscriptionBoxMessage>
-          )}
-        </Screen>
-        <RoomSection displayProperty={displayRooms ? 'block' : 'none'}>
-          <StyledSubtitle variant="h6">Ótima pedida! Agora escolha seu quarto:</StyledSubtitle>
-          <RoomDiv>
-            {!dataRooms
-              ? ''
-              : dataRooms.map((item) => {
-                  return item.capacity === item.bookingCount ? (
-                    <RoomBoxFull key={item.id}>
-                      <p>{item.name}</p>
-                      <div>
-                        {[...Array(item.capacity)].map((_, i) => {
-                          return <BsFillPersonFill key={i} color="#8C8C8C" />;
-                        })}
-                      </div>
-                    </RoomBoxFull>
-                  ) : item.id === selectedRoom ? (
-                    <RoomBoxSelected key={item.id} onClick={() => setSelectedRoom('')}>
-                      <p>{item.name}</p>
-                      <div>
-                        {[...Array(item.capacity)].map((_, i) => {
-                          return i > item.capacity - item.bookingCount - 1 ? (
-                            <BsFillPersonFill key={i} />
-                          ) : i > item.capacity - item.bookingCount - 2 ? (
-                            <BsFillPersonFill key={i} color="#FF4791" />
-                          ) : (
-                            <BsPerson key={i} />
-                          );
-                        })}
-                      </div>
-                    </RoomBoxSelected>
-                  ) : (
-                    <RoomBox key={item.id} onClick={() => setSelectedRoom(item.id)}>
-                      <p>{item.name}</p>
-                      <div>
-                        {[...Array(item.capacity)].map((_, i) => {
-                          return i > item.capacity - item.bookingCount - 1 ? (
-                            <BsFillPersonFill key={i} />
-                          ) : (
-                            <BsPerson key={i} />
-                          );
-                        })}
-                      </div>
-                    </RoomBox>
-                  );
-                })}
-          </RoomDiv>
-          <ReservateRoomButton onClick={reservate}>
-            <p>RESERVAR QUARTO</p>
-          </ReservateRoomButton>
-        </RoomSection>
-      </>
-    );
-  }
-
+            <>
+              <h2>Primeiro, escolha seu hotel</h2>
+              <Hotels>
+                {hotels.map((h) => (
+                  <Hotel
+                    id={h.id}
+                    name={h.name}
+                    image={h.image}
+                    token={token}
+                    accommodationType={accommodationType}
+                    vacancies={vacancies}
+                    selectedHotel={selectedHotel}
+                    setSelectedHotel={setSelectedHotel}
+                    setDisplayRooms={setDisplayRooms}
+                    selectedRoom={setSelectedRoom}
+                    setSelectedRoom={setSelectedRoom}
+                  />
+                ))}
+              </Hotels>
+              <RoomSection displayProperty={displayRooms ? 'block' : 'none'}>
+                <StyledSubtitle variant="h6">Ótima pedida! Agora escolha seu quarto:</StyledSubtitle>
+                <RoomDiv>
+                  {!dataRooms
+                    ? ''
+                    : dataRooms.map((item) => {
+                        return item.capacity === item.bookingCount ? (
+                          <RoomBoxFull key={item.id}>
+                            <p>{item.name}</p>
+                            <div>
+                              {[...Array(item.capacity)].map((_, i) => {
+                                return <BsFillPersonFill key={i} color="#8C8C8C" />;
+                              })}
+                            </div>
+                          </RoomBoxFull>
+                        ) : item.id === selectedRoom ? (
+                          <RoomBoxSelected key={item.id} onClick={() => setSelectedRoom('')}>
+                            <p>{item.name}</p>
+                            <div>
+                              {[...Array(item.capacity)].map((_, i) => {
+                                return i > item.capacity - item.bookingCount - 1 ? (
+                                  <BsFillPersonFill key={i} />
+                                ) : i > item.capacity - item.bookingCount - 2 ? (
+                                  <BsFillPersonFill key={i} color="#FF4791" />
+                                ) : (
+                                  <BsPerson key={i} />
+                                );
+                              })}
+                            </div>
+                          </RoomBoxSelected>
+                        ) : (
+                          <RoomBox key={item.id} onClick={() => setSelectedRoom(item.id)}>
+                            <p>{item.name}</p>
+                            <div>
+                              {[...Array(item.capacity)].map((_, i) => {
+                                return i > item.capacity - item.bookingCount - 1 ? (
+                                  <BsFillPersonFill key={i} />
+                                ) : (
+                                  <BsPerson key={i} />
+                                );
+                              })}
+                            </div>
+                          </RoomBox>
+                        );
+                      })}
+                </RoomDiv>
+                <ReservateRoomButton onClick={reservate}>
+                  <p>RESERVAR QUARTO</p>
+                </ReservateRoomButton>
+              </RoomSection>
+            </>
+          )
+        ) : hotelError == 'cannotFindEnrollmenteError' ? (
+          <SubscriptionBoxMessage>
+            <h4>Você precisa completar sua inscrição antes de prosseguir pra escolha de ingresso</h4>
+          </SubscriptionBoxMessage>
+        ) : hotelError == 'notPaidYetError' ? (
+          <SubscriptionBoxMessage>
+            <h4>Você precisa ter confirmado pagamento antes fazer a escolha de hospedagem</h4>
+          </SubscriptionBoxMessage>
+        ) : (
+          <SubscriptionBoxMessage>
+            <h4>Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades</h4>
+          </SubscriptionBoxMessage>
+        )}
+      </Screen>
+    </>
+  );
+}
 
 const Screen = styled.div`
   font-family: 'Roboto' sans-serif;

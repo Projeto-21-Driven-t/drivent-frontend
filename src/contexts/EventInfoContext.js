@@ -9,7 +9,7 @@ export default EventInfoContext;
 
 export function EventInfoProvider({ children }) {
   const { event, eventLoading, eventError } = useEvent();
-
+  
   if (eventLoading) {
     return (
       <Splash loading />
