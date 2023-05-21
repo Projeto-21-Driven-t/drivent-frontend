@@ -4,6 +4,7 @@ import { BsPerson, BsFillPersonFill } from 'react-icons/bs';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import * as hotelApi from '../../services/hotelApi';
+import * as roomApi from '../../services/roomApi';
 import useToken from '../../hooks/useToken';
 import { useState, useEffect } from 'react';
 import useHotels from '../../hooks/api/useHotel';
@@ -20,7 +21,6 @@ export function HotelList() {
   const [hotelError, setHotelError] = useState('');
   const [accommodationType, setAccommodationType] = useState('none');
   const [vacancies, setVacancies] = useState(0);
-  const [userReservation, setUserReservation] = useState();
   const [userRoom, setUserRoom] = useState();
   const { getHotels } = useHotels();
   const { findRoom } = useFindRooms();
@@ -45,16 +45,10 @@ export function HotelList() {
         });
 
         {
-          RoomsCapacity.includes(1) && accommodationTypeArray.push('Single');
-        }
-        {
-          RoomsCapacity.includes(2) && accommodationTypeArray.push('Double');
-        }
-        {
-          RoomsCapacity.includes(3) && accommodationTypeArray.push('Triple');
-        }
-        {
-          RoomsCapacity.includes(4) && accommodationTypeArray.push('Quadruple');
+          RoomsCapacity.includes(1) ? accommodationTypeArray.push('Single') :
+            RoomsCapacity.includes(2) ? accommodationTypeArray.push('Double') :
+              RoomsCapacity.includes(3) ? accommodationTypeArray.push('Triple') :
+              accommodationTypeArray.push('Quadruple')
         }
 
         setAccommodationType(accommodationTypeArray.join(', '));
@@ -80,7 +74,7 @@ export function HotelList() {
     };
 
     fetchData();
-  }, [token]);
+  }, [token,]);
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -97,10 +91,18 @@ export function HotelList() {
   }, [token]);
 
   async function reservate() {
-    await createRoom(selectedHotel);
+
+    if(!userRoom) {
+      await roomApi.reservateRoom(token, selectedHotel);
+    }
+    else{
+      await roomApi.changeBooking(token, selectedHotel);
+    }
+    const userRoom = await findRoom();
+    setUserRoom(userRoom);
   }
 
-  if (!userReservation) {
+ 
     return (
       <>
         <Screen>
@@ -108,7 +110,9 @@ export function HotelList() {
           {hotelError == '' || 'Request failed with status code 404' ? (
             userRoom ? (
               <>
-                <HotelCheckoutResume />
+                <HotelCheckoutResume
+                roomInfo={userRoom}
+                setUserRoom={setUserRoom}/>
               </>
             ) : (
               <>
@@ -190,14 +194,14 @@ export function HotelList() {
                   );
                 })}
           </RoomDiv>
-          <ReservateRoomButton onClick={'nada'}>
+          <ReservateRoomButton onClick={reservate}>
             <p>RESERVAR QUARTO</p>
           </ReservateRoomButton>
         </RoomSection>
       </>
     );
   }
-}
+
 
 const Screen = styled.div`
   font-family: 'Roboto' sans-serif;
