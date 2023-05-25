@@ -6,11 +6,13 @@ import useEnrollment from '../../hooks/api/useEnrollment';
 import Checkout from './checkout';
 import useTicket from '../../hooks/api/useTicket';
 import { useEffect, useState } from 'react';
+import useActivities from '../../hooks/api/useActivity';
 
 export default function TicketAndPayment() {
   const { enrollment } = useEnrollment();
   const { ticketLoading, getTickets } = useTicket();
   const [ticket, setTicket] = useState();
+  const { activities } = useActivities();
 
   async function fetchTicket() {
     try {
