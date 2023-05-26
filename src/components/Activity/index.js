@@ -125,25 +125,28 @@ const response = [
 const locais = ['Auditório Principal', 'Auditório Lateral', 'Sala de Workshop'];
 
 export function ActivitiesPage() {
-  const { getActivities } = useActivities();
+  const { activities, activitiesLoading, activitiesError } = useActivities();
   const [selectedDay, setSelectedDay] = React.useState(response[0].date);
-  const [activities, setActivities] = useState();
 
-  useEffect(async () => {
-    const activities = await getActivities();
-    setActivities(activities);
+  console.log(activities);
+  console.log(typeof activities);
 
-    console.log('useEfect', activities);
-  }, []);
+  //   useEffect(async () => {
+  //     const response = await getActivities();
+  //     setActivities(response);
 
-  function renderActivities() {
-    for (let local of activities) {
-      console.log(local, item);
-      if (local === item) {
-        return <ActivityDiv />;
-      }
-    }
-  }
+  //     console.log( activities);
+  //     console.log(typeof(activities))
+  //   }, []);
+
+  //   function renderActivities() {
+  //     for (let local of activities) {
+  //       console.log(local, item);
+  //       if (local === item) {
+  //         return <ActivityDiv />;
+  //       }
+  //     }
+  //   }
 
   return (
     <>
@@ -175,18 +178,9 @@ export function ActivitiesPage() {
           {locais.map((item, i) => {
             return (
               <Separator border={i === response.length - 1 ? '0' : '1'}>
-                {activities &&
-                  activities.length > 0 &&
-                  activities[i] &&
-                  activities[i].map((a) => (
-                    <ActivityDiv
-                      key={a.id}
-                      name={a.name}
-                      startsAt={a.startsAt}
-                      endsAt={a.endsAt}
-                      capacity={a.capacity}
-                    />
-                  ))}
+                {activities?.map((a) => {
+                  if (a.place === item) return <ActivityDiv activity={a} />;
+                })}
               </Separator>
             );
           })}
@@ -281,6 +275,13 @@ const Separator = styled.div`
   border-right: ${(props) => props.border}px solid #d7d7d7;
 
   padding: 10px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const RoomNameDiv = styled.div`
