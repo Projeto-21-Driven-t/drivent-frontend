@@ -11,12 +11,12 @@ export default function useActivities() {
     loading: activitiesLoading,
     error: activitiesError,
     act: getActivities,
-  } = useAsync(() => activityApi.getActivities(token), false);
+  } = useAsync(() => activityApi.getActivities(token));
 
   return {
     activities,
     activitiesLoading,
     activitiesError,
-    getActivities
+    getActivities,
   };
 }

@@ -3,42 +3,30 @@ import { IconContext } from 'react-icons';
 import { IoEnterOutline } from 'react-icons/io5';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 
-export function ActivityDiv({ name, startsAt, endsAt, capacity }) {
-  const activities = [
-    {
-      name: name,
-      startsAt: startsAt,
-      endsAt: endsAt,
-      capacity: capacity,
-      duration: Number(endsAt.replace(':00', '') - startsAt.replace(':00', ' ')),
-    },
-  ];
+export function ActivityDiv({ activity }) {
+  const { name, capacity, startsAt, endsAt } = activity;
+  const start = startsAt.slice(-5);
+  const end = endsAt.slice(-5);
+  const duration = Number(end.replace(':00', '') - start.replace(':00', ''));
 
-  console.log(activities);
-
+  console.log(duration);
   return (
     <>
-      <StyleActivityDiv>
-        {activities.map((a) => {
-          return (
-            <>
-              <ActivityInfoDiv duration={a.duration}>
-                <h1>{a.name}</h1>
-                <p>
-                  {a.startsAt} - {a.endsAt}
-                </p>
-              </ActivityInfoDiv>
-              <ActivityBorder></ActivityBorder>
-              <ActivityStatusDiv>
-                <IconContext.Provider value={{ size: 25 }}>
-                  <IoEnterOutline />
-                </IconContext.Provider>
+      <StyleActivityDiv duration={duration}>
+        <ActivityInfoDiv>
+          <ActivityName>{name}</ActivityName>
+          <p>
+            {start} - {end}
+          </p>
+        </ActivityInfoDiv>
+        <ActivityBorder></ActivityBorder>
+        <ActivityStatusDiv>
+          <IconContext.Provider value={{ size: 25 }}>
+            <IoEnterOutline />
+          </IconContext.Provider>
 
-                <p>{a.capacity} vagas</p>
-              </ActivityStatusDiv>
-            </>
-          );
-        })}
+          <p>{capacity} vagas</p>
+        </ActivityStatusDiv>
       </StyleActivityDiv>
     </>
   );
@@ -61,25 +49,25 @@ const ActivityInfoDiv = styled.div`
 
   padding: 12px 10px;
 
-  h1 {
-    font-family: Roboto;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 14px;
-    letter-spacing: 0em;
-    text-align: left;
-
-    margin-bottom: 6px;
-  }
-
   p {
-    font-family: Roboto;
-    font-size: 12px;
+    font-family: Roboto, sans-serif;
+    font-size: 12px !important;
     font-weight: 400;
     line-height: 14px;
     letter-spacing: 0em;
     text-align: left;
   }
+`;
+
+const ActivityName = styled.h4`
+  font-family: Roboto;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0em;
+  text-align: left;
+
+  margin-bottom: 6px;
 `;
 
 const ActivityStatusDiv = styled.div`
