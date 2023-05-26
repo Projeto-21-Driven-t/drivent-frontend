@@ -128,12 +128,19 @@ export function ActivitiesPage() {
   const { getActivities } = useActivities();
   const [selectedDay, setSelectedDay] = React.useState(response[0].date);
   const [activities, setActivities] = useState();
+  const [activitiesError, setActivitiesError] = useState('');
+
 
   useEffect(async () => {
-    const activities = await getActivities();
-    setActivities(activities);
+    try {
+      const activities = await getActivities();
+      setActivities(activities);
 
-    console.log('useEfect', activities);
+      console.log('useEfect', activities);
+    } catch (error) {
+      setActivitiesError(error.response.data.message)
+    }
+    
   }, []);
 
   function renderActivities() {
@@ -148,6 +155,8 @@ export function ActivitiesPage() {
   return (
     <>
       <Screen>
+        {activitiesError == '' ? 
+        (<>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
         <DaysDiv>
           {response.map((item) => {
@@ -190,7 +199,19 @@ export function ActivitiesPage() {
               </Separator>
             );
           })}
-        </ScheduleDiv>
+        </ScheduleDiv></>) :
+        activitiesError == 'notPaidYetError' ?
+        <SubscriptionBoxMessage>
+          <h4>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</h4>
+        </SubscriptionBoxMessage> :
+        activitiesError == 'isRemoteTycketError' ?
+        <SubscriptionBoxMessage>
+        <h4>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</h4>
+      </SubscriptionBoxMessage> :
+      <SubscriptionBoxMessage>
+      <h4>erro no servidor</h4>
+    </SubscriptionBoxMessage>
+      }
       </Screen>
     </>
   );
@@ -303,3 +324,63 @@ const StyledSubtitle = styled.h2`
   margin-bottom: 18px;
   color: #8e8e8e;
 `;
+
+const SubscriptionBoxMessage = styled.div`
+  width: 420px;
+  height: 46px;
+  margin: 243px auto;
+  text-align: center;
+  h4 {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 23px;
+    color: #8e8e8e;
+  }
+`;
+
+
+
+
+// (<StyledTypography variant="h4">Escolha de atividades</StyledTypography>
+//         <DaysDiv>
+//           {response.map((item) => {
+//             return item.date === selectedDay ? (
+//               <DayBoxSelected>
+//                 {item.weekday}, {item.date}
+//               </DayBoxSelected>
+//             ) : (
+//               <DayBox onClick={() => setSelectedDay(item.date)}>
+//                 {item.weekday}, {item.date}
+//               </DayBox>
+//             );
+//           })}
+//         </DaysDiv>
+//         <RoomNameDiv>
+//           {locais.map((item) => {
+//             return (
+//               <div>
+//                 <StyledSubtitle variant="h6">{item}</StyledSubtitle>
+//               </div>
+//             );
+//           })}
+//         </RoomNameDiv>
+//         <ScheduleDiv>
+//           {locais.map((item, i) => {
+//             return (
+//               <Separator border={i === response.length - 1 ? '0' : '1'}>
+//                 {activities &&
+//                   activities.length > 0 &&
+//                   activities[i] &&
+//                   activities[i].map((a) => (
+//                     <ActivityDiv
+//                       key={a.id}
+//                       name={a.name}
+//                       startsAt={a.startsAt}
+//                       endsAt={a.endsAt}
+//                       capacity={a.capacity}
+//                     />
+//                   ))}
+//               </Separator>
+//             );
+//           })}
+//         </ScheduleDiv>)
