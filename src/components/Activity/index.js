@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import useToken from '../../hooks/useToken';
 import useActivities from '../../hooks/api/useActivity';
 import { ActivityDiv } from './ActivityDiv';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const response = [
   {
@@ -126,34 +129,39 @@ const response = [
 const locais = ['Auditório Principal', 'Auditório Lateral', 'Sala de Workshop'];
 
 export function ActivitiesPage() {
-
-  const token = useToken();
-  
+  const { getActivities, activitiesLoading, activitiesError } = useActivities();
+  const [selectedDay, setSelectedDay] = React.useState();
+  const [activities, setActivities] = useState();
+  const [eventDays, setEventDays] = useState();
+  const weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   const { getActivities } = useActivities();
-  const [selectedDay, setSelectedDay] = React.useState(response[0].date);
-  const [activities,setActivities] = useState([]);
   const [activitiesError,setActivitiesError] = useState('');
-  
+  console.log(activities);
+  console.log(typeof activities);
 
   useEffect(async () => {
     try {
       const data = await getActivities();
       console.log(data);
       setActivities(data);
+      getEventDays(data);
     } catch (error) {
       console.log(error);
       setActivitiesError(error.response.data.message)
     }
   }, []);
+  useEffect(async () => {
+    const activities = await getActivities();
+    setActivities(activities);
+    activities && getEventDays(activities);
+  }, []);
 
-  //   function renderActivities() {
-  //     for (let local of activities) {
-  //       console.log(local, item);
-  //       if (local === item) {
-  //         return <ActivityDiv />;
-  //       }
-  //     }
-  //   }
+  function getEventDays(activities) {
+    const activityDates = activities.map((a) => a.startsAt.replace('/23', '').split(' ')[0]);
+    const eventDays = Array.from(new Set(activityDates));
+    setEventDays(eventDays);
+    setSelectedDay(eventDays[0]);
+  }
 
   return (
     <>
@@ -162,17 +170,17 @@ export function ActivitiesPage() {
         (<>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
         <DaysDiv>
-          {response.map((item) => {
-            return item.date === selectedDay ? (
+          {eventDays?.map((d) =>
+            d === selectedDay ? (
               <DayBoxSelected>
-                {item.weekday}, {item.date}
+                {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
               </DayBoxSelected>
             ) : (
-              <DayBox onClick={() => setSelectedDay(item.date)}>
-                {item.weekday}, {item.date}
+              <DayBox onClick={() => setSelectedDay(d)}>
+                {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
               </DayBox>
-            );
-          })}
+            )
+          )}
         </DaysDiv>
         <RoomNameDiv>
           {locais.map((item) => {
@@ -187,7 +195,7 @@ export function ActivitiesPage() {
           {locais.map((item, i) => {
             return (
               <Separator border={i === response.length - 1 ? '0' : '1'}>
-                {activities?.map((a) => {
+                {activities?.filter((a) => selectedDay ? a.startsAt.slice(0, 5) === selectedDay : a).map((a) => {
                   if (a.place === item) return <ActivityDiv activity={a} />;
                 })}
               </Separator>
