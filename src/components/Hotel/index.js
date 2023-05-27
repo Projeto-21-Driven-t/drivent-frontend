@@ -72,7 +72,6 @@ export function HotelList() {
         const hotels = await getHotels();
         setHotels(hotels);
       } catch (error) {
-        console.log(error.message);
         setHotelError(error.response.data.message);
       }
     };
@@ -87,7 +86,6 @@ export function HotelList() {
         setUserRoom(userRoom);
       } catch (error) {
         console.log(error.message);
-        setHotelError(error.response.data.message);
       }
     };
 
@@ -101,11 +99,12 @@ export function HotelList() {
     setRoomChange(false);
   }
 
+  console.log('hotelError =', hotelError)
   return (
     <>
       <Screen>
         <StyledTypography variant="h4">Escolha de hotel e quarto</StyledTypography>
-        {hotelError == '' || 'Request failed with status code 404' ? (
+        {hotelError == '' ? (
           userRoom && !roomChange ? (
             <>
               <HotelCheckoutResume roomInfo={userRoom} setUserRoom={setUserRoom} />
@@ -190,11 +189,15 @@ export function HotelList() {
           <SubscriptionBoxMessage>
             <h4>Você precisa ter confirmado pagamento antes fazer a escolha de hospedagem</h4>
           </SubscriptionBoxMessage>
-        ) : (
+        ) : hotelError == 'notHotelIncludesError' ? (
           <SubscriptionBoxMessage>
             <h4>Sua modalidade de ingresso não inclui hospedagem Prossiga para a escolha de atividades</h4>
           </SubscriptionBoxMessage>
-        )}
+        ) : 
+        <SubscriptionBoxMessage>
+            <h4>{hotelError}</h4>
+          </SubscriptionBoxMessage>
+        }
       </Screen>
     </>
   );

@@ -2,6 +2,7 @@
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import useToken from '../../hooks/useToken';
 import useActivities from '../../hooks/api/useActivity';
 import { ActivityDiv } from './ActivityDiv';
 import dayjs from 'dayjs';
@@ -133,26 +134,22 @@ export function ActivitiesPage() {
   const [activities, setActivities] = useState();
   const [eventDays, setEventDays] = useState();
   const weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-
+  const { getActivities } = useActivities();
+  const [activitiesError,setActivitiesError] = useState('');
   console.log(activities);
   console.log(typeof activities);
 
-  //   useEffect(async () => {
-  //     const response = await getActivities();
-  //     setActivities(response);
-
-  //     console.log( activities);
-  //     console.log(typeof(activities))
-  //   }, []);
-
-  //   function renderActivities() {
-  //     for (let local of activities) {
-  //       console.log(local, item);
-  //       if (local === item) {
-  //         return <ActivityDiv />;
-  //       }
-  //     }
-  //   }
+  useEffect(async () => {
+    try {
+      const data = await getActivities();
+      console.log(data);
+      setActivities(data);
+      getEventDays(data);
+    } catch (error) {
+      console.log(error);
+      setActivitiesError(error.response.data.message)
+    }
+  }, []);
   useEffect(async () => {
     const activities = await getActivities();
     setActivities(activities);
@@ -169,6 +166,8 @@ export function ActivitiesPage() {
   return (
     <>
       <Screen>
+        {activitiesError == '' ? 
+        (<>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
         <DaysDiv>
           {eventDays?.map((d) =>
@@ -202,7 +201,19 @@ export function ActivitiesPage() {
               </Separator>
             );
           })}
-        </ScheduleDiv>
+        </ScheduleDiv></>) :
+        activitiesError == 'notPaidYetError' ?
+        <SubscriptionBoxMessage>
+          <h4>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</h4>
+        </SubscriptionBoxMessage> :
+        activitiesError == 'isRemoteTicketError' ?
+        <SubscriptionBoxMessage>
+        <h4>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</h4>
+      </SubscriptionBoxMessage> :
+      <SubscriptionBoxMessage>
+      <h4>erro no servidor</h4>
+    </SubscriptionBoxMessage>
+      }
       </Screen>
     </>
   );
@@ -321,4 +332,17 @@ const StyledSubtitle = styled.h2`
   line-height: 23px;
   margin-bottom: 18px;
   color: #8e8e8e;
+`;
+
+const SubscriptionBoxMessage = styled.div`
+  width: 420px;
+  height: 46px;
+  margin: 243px auto;
+  text-align: center;
+  h4 {
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 23px;
+    color: #8e8e8e;
+  }
 `;
