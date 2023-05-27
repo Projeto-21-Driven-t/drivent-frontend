@@ -7,12 +7,12 @@ export function ActivityDiv({ activity }) {
   const { name, capacity, startsAt, endsAt } = activity;
   const start = startsAt.slice(-5);
   const end = endsAt.slice(-5);
-  const duration = Number(end.replace(':00', '') - start.replace(':00', ''));
 
-  console.log(duration);
+  //const duration = Number(end.replace(':00', '') - start.replace(':00', ''));
+
   return (
     <>
-      <StyleActivityDiv duration={duration}>
+      <StyleActivityDiv>
         <ActivityInfoDiv>
           <ActivityName>{name}</ActivityName>
           <p>
