@@ -129,13 +129,12 @@ const response = [
 const locais = ['Auditório Principal', 'Auditório Lateral', 'Sala de Workshop'];
 
 export function ActivitiesPage() {
-  const { getActivities, activitiesLoading, activitiesError } = useActivities();
   const [selectedDay, setSelectedDay] = React.useState();
   const [activities, setActivities] = useState();
   const [eventDays, setEventDays] = useState();
   const weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
   const { getActivities } = useActivities();
-  const [activitiesError,setActivitiesError] = useState('');
+  const [activitiesError, setActivitiesError] = useState('');
   console.log(activities);
   console.log(typeof activities);
 
@@ -146,8 +145,7 @@ export function ActivitiesPage() {
       setActivities(data);
       getEventDays(data);
     } catch (error) {
-      console.log(error);
-      setActivitiesError(error.response.data.message)
+      setActivitiesError(error.response.data.message);
     }
   }, []);
   useEffect(async () => {
@@ -166,54 +164,60 @@ export function ActivitiesPage() {
   return (
     <>
       <Screen>
-        {activitiesError == '' ? 
-        (<>
-        <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
-        <DaysDiv>
-          {eventDays?.map((d) =>
-            d === selectedDay ? (
-              <DayBoxSelected>
-                {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
-              </DayBoxSelected>
-            ) : (
-              <DayBox onClick={() => setSelectedDay(d)}>
-                {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
-              </DayBox>
-            )
-          )}
-        </DaysDiv>
-        <RoomNameDiv>
-          {locais.map((item) => {
-            return (
-              <div>
-                <StyledSubtitle variant="h6">{item}</StyledSubtitle>
-              </div>
-            );
-          })}
-        </RoomNameDiv>
-        <ScheduleDiv>
-          {locais.map((item, i) => {
-            return (
-              <Separator border={i === response.length - 1 ? '0' : '1'}>
-                {activities?.filter((a) => selectedDay ? a.startsAt.slice(0, 5) === selectedDay : a).map((a) => {
-                  if (a.place === item) return <ActivityDiv activity={a} />;
-                })}
-              </Separator>
-            );
-          })}
-        </ScheduleDiv></>) :
-        activitiesError == 'notPaidYetError' ?
-        <SubscriptionBoxMessage>
-          <h4>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</h4>
-        </SubscriptionBoxMessage> :
-        activitiesError == 'isRemoteTicketError' ?
-        <SubscriptionBoxMessage>
-        <h4>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</h4>
-      </SubscriptionBoxMessage> :
-      <SubscriptionBoxMessage>
-      <h4>erro no servidor</h4>
-    </SubscriptionBoxMessage>
-      }
+        {activitiesError == '' ? (
+          <>
+            <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
+            <DaysDiv>
+              {eventDays?.map((d) =>
+                d === selectedDay ? (
+                  <DayBoxSelected>
+                    {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
+                  </DayBoxSelected>
+                ) : (
+                  <DayBox onClick={() => setSelectedDay(d)}>
+                    {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
+                  </DayBox>
+                )
+              )}
+            </DaysDiv>
+            <RoomNameDiv>
+              {locais.map((item) => {
+                return (
+                  <div>
+                    <StyledSubtitle variant="h6">{item}</StyledSubtitle>
+                  </div>
+                );
+              })}
+            </RoomNameDiv>
+            <ScheduleDiv>
+              {locais.map((item, i) => {
+                return (
+                  <Separator border={i === response.length - 1 ? '0' : '1'}>
+                    {activities
+                      ?.filter((a) => (selectedDay ? a.startsAt.slice(0, 5) === selectedDay : a))
+                      .map((a) => {
+                        if (a.place === item) return <ActivityDiv activity={a} />;
+                      })}
+                  </Separator>
+                );
+              })}
+            </ScheduleDiv>
+          </>
+        ) : activitiesError == 'notPaidYetError' ? (
+          <SubscriptionBoxMessage>
+            <h4>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</h4>
+          </SubscriptionBoxMessage>
+        ) : activitiesError == 'isRemoteTicketError' ? (
+          <SubscriptionBoxMessage>
+            <h4>
+              Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.
+            </h4>
+          </SubscriptionBoxMessage>
+        ) : (
+          <SubscriptionBoxMessage>
+            <h4>erro no servidor</h4>
+          </SubscriptionBoxMessage>
+        )}
       </Screen>
     </>
   );
