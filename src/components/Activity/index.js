@@ -2,6 +2,7 @@
 import Typography from '@material-ui/core/Typography';
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import useToken from '../../hooks/useToken';
 import useActivities from '../../hooks/api/useActivity';
 import { ActivityDiv } from './ActivityDiv';
 
@@ -125,32 +126,34 @@ const response = [
 const locais = ['Auditório Principal', 'Auditório Lateral', 'Sala de Workshop'];
 
 export function ActivitiesPage() {
+
+  const token = useToken();
+  
   const { getActivities } = useActivities();
   const [selectedDay, setSelectedDay] = React.useState(response[0].date);
-  const [activities, setActivities] = useState();
-  const [activitiesError, setActivitiesError] = useState('');
-
+  const [activities,setActivities] = useState([]);
+  const [activitiesError,setActivitiesError] = useState('');
+  
 
   useEffect(async () => {
     try {
-      const activities = await getActivities();
-      setActivities(activities);
-
-      console.log('useEfect', activities);
+      const data = await getActivities();
+      console.log(data);
+      setActivities(data);
     } catch (error) {
+      console.log(error);
       setActivitiesError(error.response.data.message)
     }
-    
   }, []);
 
-  function renderActivities() {
-    for (let local of activities) {
-      console.log(local, item);
-      if (local === item) {
-        return <ActivityDiv />;
-      }
-    }
-  }
+  //   function renderActivities() {
+  //     for (let local of activities) {
+  //       console.log(local, item);
+  //       if (local === item) {
+  //         return <ActivityDiv />;
+  //       }
+  //     }
+  //   }
 
   return (
     <>
@@ -184,18 +187,9 @@ export function ActivitiesPage() {
           {locais.map((item, i) => {
             return (
               <Separator border={i === response.length - 1 ? '0' : '1'}>
-                {activities &&
-                  activities.length > 0 &&
-                  activities[i] &&
-                  activities[i].map((a) => (
-                    <ActivityDiv
-                      key={a.id}
-                      name={a.name}
-                      startsAt={a.startsAt}
-                      endsAt={a.endsAt}
-                      capacity={a.capacity}
-                    />
-                  ))}
+                {activities?.map((a) => {
+                  if (a.place === item) return <ActivityDiv activity={a} />;
+                })}
               </Separator>
             );
           })}
@@ -204,7 +198,7 @@ export function ActivitiesPage() {
         <SubscriptionBoxMessage>
           <h4>Você precisa ter confirmado pagamento antes de fazer a escolha de atividades</h4>
         </SubscriptionBoxMessage> :
-        activitiesError == 'isRemoteTycketError' ?
+        activitiesError == 'isRemoteTicketError' ?
         <SubscriptionBoxMessage>
         <h4>Sua modalidade de ingresso não necessita escolher atividade. Você terá acesso a todas as atividades.</h4>
       </SubscriptionBoxMessage> :
@@ -302,6 +296,13 @@ const Separator = styled.div`
   border-right: ${(props) => props.border}px solid #d7d7d7;
 
   padding: 10px;
+  overflow-y: scroll;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 `;
 
 const RoomNameDiv = styled.div`
@@ -337,50 +338,3 @@ const SubscriptionBoxMessage = styled.div`
     color: #8e8e8e;
   }
 `;
-
-
-
-
-// (<StyledTypography variant="h4">Escolha de atividades</StyledTypography>
-//         <DaysDiv>
-//           {response.map((item) => {
-//             return item.date === selectedDay ? (
-//               <DayBoxSelected>
-//                 {item.weekday}, {item.date}
-//               </DayBoxSelected>
-//             ) : (
-//               <DayBox onClick={() => setSelectedDay(item.date)}>
-//                 {item.weekday}, {item.date}
-//               </DayBox>
-//             );
-//           })}
-//         </DaysDiv>
-//         <RoomNameDiv>
-//           {locais.map((item) => {
-//             return (
-//               <div>
-//                 <StyledSubtitle variant="h6">{item}</StyledSubtitle>
-//               </div>
-//             );
-//           })}
-//         </RoomNameDiv>
-//         <ScheduleDiv>
-//           {locais.map((item, i) => {
-//             return (
-//               <Separator border={i === response.length - 1 ? '0' : '1'}>
-//                 {activities &&
-//                   activities.length > 0 &&
-//                   activities[i] &&
-//                   activities[i].map((a) => (
-//                     <ActivityDiv
-//                       key={a.id}
-//                       name={a.name}
-//                       startsAt={a.startsAt}
-//                       endsAt={a.endsAt}
-//                       capacity={a.capacity}
-//                     />
-//                   ))}
-//               </Separator>
-//             );
-//           })}
-//         </ScheduleDiv>)

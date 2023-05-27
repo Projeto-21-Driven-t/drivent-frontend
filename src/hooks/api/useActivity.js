@@ -17,6 +17,6 @@ export default function useActivities() {
     activities,
     activitiesLoading,
     activitiesError,
-    getActivities
+    getActivities,
   };
 }
