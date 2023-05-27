@@ -4,6 +4,9 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useActivities from '../../hooks/api/useActivity';
 import { ActivityDiv } from './ActivityDiv';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
 
 const response = [
   {
@@ -125,8 +128,11 @@ const response = [
 const locais = ['Auditório Principal', 'Auditório Lateral', 'Sala de Workshop'];
 
 export function ActivitiesPage() {
-  const { activities, activitiesLoading, activitiesError } = useActivities();
-  const [selectedDay, setSelectedDay] = React.useState(response[0].date);
+  const { getActivities, activitiesLoading, activitiesError } = useActivities();
+  const [selectedDay, setSelectedDay] = React.useState();
+  const [activities, setActivities] = useState();
+  const [eventDays, setEventDays] = useState();
+  const weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 
   console.log(activities);
   console.log(typeof activities);
@@ -147,23 +153,35 @@ export function ActivitiesPage() {
   //       }
   //     }
   //   }
+  useEffect(async () => {
+    const activities = await getActivities();
+    setActivities(activities);
+    activities && getEventDays(activities);
+  }, []);
+
+  function getEventDays(activities) {
+    const activityDates = activities.map((a) => a.startsAt.replace('/23', '').split(' ')[0]);
+    const eventDays = Array.from(new Set(activityDates));
+    setEventDays(eventDays);
+    setSelectedDay(eventDays[0]);
+  }
 
   return (
     <>
       <Screen>
         <StyledTypography variant="h4">Escolha de atividades</StyledTypography>
         <DaysDiv>
-          {response.map((item) => {
-            return item.date === selectedDay ? (
+          {eventDays?.map((d) =>
+            d === selectedDay ? (
               <DayBoxSelected>
-                {item.weekday}, {item.date}
+                {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
               </DayBoxSelected>
             ) : (
-              <DayBox onClick={() => setSelectedDay(item.date)}>
-                {item.weekday}, {item.date}
+              <DayBox onClick={() => setSelectedDay(d)}>
+                {weekdays[dayjs(d, 'DD/MM').day()]}, {d}
               </DayBox>
-            );
-          })}
+            )
+          )}
         </DaysDiv>
         <RoomNameDiv>
           {locais.map((item) => {
@@ -178,7 +196,7 @@ export function ActivitiesPage() {
           {locais.map((item, i) => {
             return (
               <Separator border={i === response.length - 1 ? '0' : '1'}>
-                {activities?.map((a) => {
+                {activities?.filter((a) => selectedDay ? a.startsAt.slice(0, 5) === selectedDay : a).map((a) => {
                   if (a.place === item) return <ActivityDiv activity={a} />;
                 })}
               </Separator>
