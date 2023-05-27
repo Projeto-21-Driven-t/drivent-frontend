@@ -129,7 +129,6 @@ const response = [
 const locais = ['Auditório Principal', 'Auditório Lateral', 'Sala de Workshop'];
 
 export function ActivitiesPage() {
-  const { getActivities, activitiesLoading, activitiesError } = useActivities();
   const [selectedDay, setSelectedDay] = React.useState();
   const [activities, setActivities] = useState();
   const [eventDays, setEventDays] = useState();
