@@ -194,7 +194,7 @@ export function ActivitiesPage() {
                 return (
                   <Separator border={i === response.length - 1 ? '0' : '1'}>
                     {activities
-                      ?.filter((a) => (selectedDay ? a.startsAt.slice(0, 5) === selectedDay : a))
+                      ?.filter((a) => (a.startsAt.slice(0, 5) === selectedDay))
                       .map((a) => {
                         if (a.place === item) return <ActivityDiv activity={a} />;
                       })}
