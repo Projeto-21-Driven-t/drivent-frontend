@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { IconContext } from 'react-icons';
 import { IoEnterOutline } from 'react-icons/io5';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 
 export function ActivityDiv({ activity }) {
@@ -8,12 +10,14 @@ export function ActivityDiv({ activity }) {
   const start = startsAt.slice(-5);
   const end = endsAt.slice(-5);
 
+  const diff = dayjs(endsAt, 'DD/MM/YY HH:mm').diff(dayjs(startsAt, 'DD/MM/YY HH:mm'))/3600000 || 1;
+  console.log(diff);
   //const duration = Number(end.replace(':00', '') - start.replace(':00', ''));
 
   return (
     <>
-      <StyleActivityDiv>
-        <ActivityInfoDiv>
+      <StyleActivityDiv diff={`${diff * 80}px`}>
+        <ActivityInfoDiv >
           <ActivityName>{name}</ActivityName>
           <p>
             {start} - {end}
@@ -33,7 +37,7 @@ export function ActivityDiv({ activity }) {
 }
 
 const StyleActivityDiv = styled.div`
-  height: ${(duration) => (duration === 2 ? '160px' : '80px')};
+  height: ${(props) => (props.diff)};
   width: 100%;
   border-radius: 5px;
 
