@@ -10,9 +10,8 @@ import useActivities from '../../hooks/api/useActivity';
 
 export default function TicketAndPayment() {
   const { enrollment } = useEnrollment();
-  const { ticketLoading, getTickets } = useTicket();
+  const { getTickets } = useTicket();
   const [ticket, setTicket] = useState();
-  const { activities } = useActivities();
 
   async function fetchTicket() {
     try {

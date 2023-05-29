@@ -1,43 +1,38 @@
 import styled from 'styled-components';
-import { IconContext } from 'react-icons';
-import { IoEnterOutline } from 'react-icons/io5';
 import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
+import { SelectActivity } from './ChooseActivityButton';
+import { useState } from 'react';
 
 export function ActivityDiv({ activity }) {
-  const { name, capacity, startsAt, endsAt } = activity;
+  const { id, name, capacity, startsAt, endsAt, ingressed } = activity;
+  const [localIngressed, setLocalIngressed] = useState(ingressed);
   const start = startsAt.slice(-5);
   const end = endsAt.slice(-5);
-
-  const diff = dayjs(endsAt, 'DD/MM/YY HH:mm').diff(dayjs(startsAt, 'DD/MM/YY HH:mm'))/3600000 || 1;
-  console.log(diff);
-  //const duration = Number(end.replace(':00', '') - start.replace(':00', ''));
-
+  const diff = dayjs(endsAt, 'DD/MM/YY HH:mm').diff(dayjs(startsAt, 'DD/MM/YY HH:mm')) / 3600000 || 1;
   return (
     <>
       <StyleActivityDiv diff={`${diff * 80}px`}>
-        <ActivityInfoDiv >
+        <ActivityInfoDiv>
           <ActivityName>{name}</ActivityName>
           <p>
             {start} - {end}
           </p>
         </ActivityInfoDiv>
         <ActivityBorder></ActivityBorder>
-        <ActivityStatusDiv>
-          <IconContext.Provider value={{ size: 25 }}>
-            <IoEnterOutline />
-          </IconContext.Provider>
-
-          <p>{capacity} vagas</p>
-        </ActivityStatusDiv>
+        <SelectActivity
+          id={id}
+          startsAt={startsAt}
+          setIngressed={setLocalIngressed}
+          ingressed={localIngressed}
+          capacity={capacity}
+        />
       </StyleActivityDiv>
     </>
   );
 }
 
 const StyleActivityDiv = styled.div`
-  height: ${(props) => (props.diff)};
+  height: ${(props) => props.diff};
   width: 100%;
   border-radius: 5px;
 
@@ -72,24 +67,6 @@ const ActivityName = styled.h4`
   text-align: left;
 
   margin-bottom: 6px;
-`;
-
-const ActivityStatusDiv = styled.div`
-  height: 100%;
-  width: 65px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  p {
-    font-family: Roboto;
-    font-size: 9px;
-    font-weight: 400;
-    line-height: 11px;
-    letter-spacing: 0em;
-    text-align: left;
-  }
 `;
 
 const ActivityBorder = styled.div`
